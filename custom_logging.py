@@ -2,7 +2,7 @@
 # @Author: John Portella
 # @Date:   2022-12-02 09:23:09
 # @Last Modified by:   John Portella
-# @Last Modified time: 2022-12-02 12:56:25
+# @Last Modified time: 2023-01-22 14:21:42
 
 import logging
 import sys
@@ -10,8 +10,22 @@ import os
 from datetime import datetime
 
 class LoggerFactory(logging.getLoggerClass()): 
-
+    """
+    LoggerFactory is a class that inherits from the logging module's logger class and 
+    allows for easy configuration and management of loggers. It has the following features:
+    - Initializes a logger with a given name and set to debug level
+    - Allows for adding of stream and file handlers
+    - Provides methods for enabling/disabling console and file output
+    - Automatically creates a log directory if it does not exist
+    - File logs are saved with the date appended to the filename
+    """
     def __init__(self, name, log_dir=None):
+        """
+        :param name: name of the logger
+        :type name: str
+        :param log_dir: directory to save log files (default: None)
+        :type log_dir: str
+        """        
         # initialize logger
         super().__init__(name)
         self.setLevel(logging.DEBUG)
@@ -30,41 +44,73 @@ class LoggerFactory(logging.getLoggerClass()):
         if log_dir:
             self.add_file_handler(name, log_dir)
 
-    def generate_log_dir(self, log_dir):        
+    def generate_log_dir(self, log_dir):
+        """
+        Creates log directory if it does not exist
+        :param log_dir: directory to save log files
+        :type log_dir: str
+        """
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
     def has_console_handler(self):
+        """
+        :return: True if the logger has a stream handler, False otherwise
+        :rtype: bool
+        """
         return len([h for h in self.handlers if type(h) == logging.StreamHandler]) > 0
     
     def has_file_handler(self):
+        """
+        :return: True if the logger has a file handler, False otherwise
+        :rtype: bool
+        """
         return len([h for h in self.handlers if isinstance(h, logging.FileHandler)]) > 0
 
     def enable_console_output(self):
+        """
+        Enables console output for the logger
+        """
         if self.has_console_handler():
             return
         self.addHandler(self.stdout_handler)
     
     def disable_console_output(self):
+        """
+        Disables console output for the logger
+        """
         if not self.has_console_handler():
             return
         self.removeHandler(self.stdout_handler)
         
     def enable_file_output(self):
+        """
+        Enables file output for the logger
+        """
         if self.has_file_handler():
             return
         self.addHandler(self.file_handler)
     
     def disable_file_output(self):
+        """
+        Disables file output for the logger
+        """
         if not self.has_file_handler():
             return
         self.removeHandler(self.file_handler)
     
     def add_file_handler(self, name, log_dir):
+        """
+        Adds a file handler to the logger
+        :param name: name of the logger
+        :type name: str
+        :param log_dir: directory to save log files
+        :type log_dir: str
+        """
         # Format for file log
         log_format = '%(asctime)s | %(name)s | %(levelname)-8s | %(lineno)04d | %(message)s'
         formatter = logging.Formatter(log_format)
-        log_name = '{:%Y-%m-%d}.log'.format(datetime.now())
+        log_name = f"{name}.log" if name else '{:%Y-%m-%d}.log'.format(datetime.now())
         log_file = os.path.join(log_dir, log_name)
         # Create log dir
         self.generate_log_dir(log_dir)
@@ -75,9 +121,28 @@ class LoggerFactory(logging.getLoggerClass()):
         self.addHandler(self.file_handler)
 
 class StaticLoggerFactory:
+    """
+    This class is a factory for creating a singleton instance of a logger. The logger is initialized with the given name and can write log messages to both stdout and a file in the specified log directory.
+
+    Attributes:
+        _LOG (logging.Logger): a singleton instance of a logger
+
+    Methods:
+        __new__(cls, name, log_dir=None): creates and returns a singleton instance of a logger. The logger is initialized with the given name and can write log messages to both stdout and a file in the specified log directory.
+    """    
     _LOG = None
 
     def __new__(cls, name, log_dir=None):
+        """
+        Creates and returns a singleton instance of a logger. The logger is initialized with the given name and can write log messages to both stdout and a file in the specified log directory.
+        
+        Arguments:
+            name (str): the name of the logger
+            log_dir (str): the directory where log files will be written, if None, only stdout is used
+        
+        Returns:
+            logging.Logger: the singleton instance of the logger
+        """        
         if cls._LOG is None:
             # initialize singleton instance
             cls._LOG = super().__new__(cls)
@@ -118,6 +183,17 @@ class StaticLoggerFactory:
         return cls._LOG
 
 def set_logger(name, log_dir=None):
+    """
+    Initializes a logger with the given name and can write log messages to both stdout and a file in the specified log directory.
+    
+    Args:
+        name (str): the name of the logger
+        log_dir (str): the directory where log files will be written, if None, only stdout is used
+    
+    Returns:
+        logging.Logger: the initialized logger
+    """
+
     # initialize logging
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
