@@ -5,10 +5,8 @@ This repository contains reusable modules for Python projects.
 
 # <a href="#custom-logging">Custom Logging</a>
 
-# <kbd>module</kbd> `custom_logging.py`
 
 
----
 
 ## <kbd>function</kbd> `set_logger`
 
@@ -148,16 +146,6 @@ Methods:
  - <b>`__new__`</b> (cls, name, log_dir=None):  creates and returns a singleton instance of a logger. The logger is initialized with the given name and can write log messages to both stdout and a file in the specified log directory. 
 
 # <a href="#pyfile-transfer">Pyfile Transfer</a>
-
-# <kbd>module</kbd> `pyfile_transfer.py`
-
-
-**Global Variables**
----------------
-- **t**
-
-
----
 
 ## <kbd>class</kbd> `PyFileTransfer`
 A class for performing file transfer using FTP or SFTP.     

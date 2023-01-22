@@ -2,7 +2,7 @@
 # @Author: John Portella
 # @Date:   2023-01-22 11:07:33
 # @Last Modified by:   John Portella
-# @Last Modified time: 2023-01-22 14:37:50
+# @Last Modified time: 2023-01-22 15:46:51
 import paramiko, os
 from ftplib import FTP
 
@@ -179,13 +179,13 @@ class PyFileTransfer(object):
         return path  
        
                          
-
-t = PyFileTransfer('sftp', 'test.rebex.net', 'unix')
-t.connection("demo", "password")
-#t.get("WinFormClient.png", '/pub/example')
-print(t.pwd())
-t.cwd('pub/example')
-print(t.pwd())
-t.setDefaultDirectory()
-print(t.pwd())
-t.disconnect()
+if __name__ == '__main__':
+    t = PyFileTransfer('sftp', 'test.rebex.net', 'unix')
+    t.connection("demo", "password")
+    #t.get("WinFormClient.png", '/pub/example')
+    print(t.pwd())
+    t.cwd('pub/example')
+    print(t.pwd())
+    t.setDefaultDirectory()
+    print(t.pwd())
+    t.disconnect()
